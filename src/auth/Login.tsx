@@ -38,22 +38,23 @@ const Login = () => {
     try {
       const result = await loginAuthUser(values).unwrap();
       dispatch(userToken(result?.token));
-      
       localStorage.setItem('token',JSON.stringify(result?.token));
+      if(localStorageToken){
+        console.log('qwe');
+      navigate('/home')
+      }
       navigate('/home');
     } catch (error) {
       console.log("error", error);
     }
   };
 
-  useEffect(() => {
-    console.log('stateToken',localStorageToken);
-    
-    if(localStorageToken){
-    console.log('adfadsfasf');
-    navigate('/home')
-    }
-  }, [])
+  // useEffect(() => {    
+  //   if(!localStorageToken){
+  //     console.log('qwe');
+  //   navigate('/')
+  //   }
+  // }, []);
   
 
   return (

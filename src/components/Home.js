@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { logoutUser } from "../slices/authSlice";
 import ChartModal from "./ChartModal";
 import Form from "react-bootstrap/Form";
@@ -20,18 +20,16 @@ const Home = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     dispatch(logoutUser());
-    navigate("/");
+    navigate("/login");
   };
-  console.log("inputRef", inputRef);
   const focusInput = () => {
     inputRef.current.focus();
   };
   useEffect(() => {
-    focusInput();
     countRef.current=countRef.current+1;
   });
 
-  console.log('divRef',divRef?.current);
+  console.log('divRef',divRef?.current );
 
   return (
     <div>
@@ -80,6 +78,9 @@ const Home = () => {
         <Button onClick={() => handleLogout()}>Logout</Button>
         <Button onClick={focusInput} className="mt-3">
           Focus Email
+        </Button>
+        <Button onClick={()=>navigate('/home/dashboard')}  variant="secondary" className="mt-3">
+          Dashboard
         </Button>
       </div>
       {modal && (
