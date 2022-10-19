@@ -6,6 +6,7 @@ import {
   useEditPostMutation,
   useGetAllPostsQuery,
   useTotalNoOfPostsQuery,
+  useViewMutationPostMutation,
 } from "../rtk/postsRtk";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
@@ -15,17 +16,23 @@ import Pagination from "react-responsive-pagination";
 import AddDetailsModal from "./AddDetailsModal";
 import { toast } from "react-toastify";
 import { useDebounce } from "use-debounce";
+import App from "./slider/App";
+import { Outlet, useNavigate } from "react-router-dom";
+import Details from "./Details";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageNo, setPageNo] = useState(0);
   const [addModal, setAddModal] = useState(false);
   const [editData, setEditData] = useState({});
   const [sortBtn, setSortBtn] = useState(false);
   const [searchInput, setSearchInput] = useState();
+  const [detailData,setDetailData]=useState();
   const [value] = useDebounce(searchInput, 1000);
 
   const [deletePost] = useDeletePostMutation();
+  const [viewMutationPost] = useViewMutationPostMutation();
 
   const pageSize = 10;
 
@@ -65,8 +72,31 @@ const Dashboard = () => {
     setEditData(filterData[0]);
   };
 
+  //View details through both query params get query and through mutation
+
+  const handleView = async (id: any) => {
+    // navigate(`/home/dashboard/details/${id}`);
+    const datas = {
+      id: id,
+    };
+    try {
+      const result:any = await viewMutationPost(datas);
+      console.log('rr',result);
+      
+      setDetailData(result?.data)
+    navigate('/home/dashboard/details');
+    
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  
+
   return (
     <div>
+      <div className="my-4 d-flex align-items-center">
+        <App />
+      </div>
       <div className="d-flex align-items-center gap-3 justify-content-center my-3">
         <Form.Group controlId="formBasicEmail">
           <Form.Control
@@ -114,10 +144,7 @@ const Dashboard = () => {
       ) : isSuccess && data?.length > 0 ? (
         <Table striped bordered hover>
           <thead>
-            <tr
-              style={{ cursor: "pointer" }}
-              onClick={() => setSortBtn(!sortBtn)}
-            >
+            <tr onClick={() => setSortBtn(!sortBtn)}>
               <th>S.No.</th>
               <th>Title</th>
               <th>Body</th>
@@ -127,7 +154,11 @@ const Dashboard = () => {
           <tbody>
             {data.map((d: any, index: any) => {
               return (
-                <tr key={d?.id}>
+                <tr
+                  style={{ cursor: "pointer" }}
+                  // onClick={() => handleView(d.id)}
+                  key={d?.id}
+                >
                   <td>
                     {sortBtn && currentPage === 1
                       ? totalData?.length - index
@@ -142,13 +173,16 @@ const Dashboard = () => {
                   </td>
                   <td>{d?.title}</td>
                   <td>{d?.body}</td>
-                  <td>
+                  <td onClick={(e) => e.stopPropagation()}>
                     <DropdownButton id="dropdown-basic-button" title="Action">
                       <Dropdown.Item onClick={() => handleEdit(d?.id)}>
                         Edit
                       </Dropdown.Item>
                       <Dropdown.Item onClick={() => handleDelete(d?.id)}>
                         Delete
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => handleView(d?.id)}>
+                        View
                       </Dropdown.Item>
                     </DropdownButton>
                   </td>
@@ -170,6 +204,8 @@ const Dashboard = () => {
           onHide={onHideFunction}
         />
       )}
+      {/* <Details detailData={detailData} /> */}
+      <Outlet />
     </div>
   );
 };

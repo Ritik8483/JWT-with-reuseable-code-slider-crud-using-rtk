@@ -1,0 +1,47 @@
+.sliderBox {
+  font-family: sans-serif;
+  text-align: center;
+  // width: 600px;
+  // height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  max-width: 100%;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    background: transparent; /* make scrollbar transparent */
+    //   -webkit-appearance: none;
+    width: 0;
+    height: 0;
+  }
+  .li {
+    background: #ff61f6;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 0 4px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+}
+// .li:nth-child(1) {
+//   background-color: blue !important;
+// }
+.button {
+  border: 0;
+  color: #777;
+  font-size: 24px;
+  margin: -16px 8px 0 8px;
+  transition: all 0.5s;
+}
+.active {
+  background-color: blue !important;
+}

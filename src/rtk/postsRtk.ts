@@ -51,6 +51,19 @@ export const postsApi = createApi({
       }),
       invalidatesTags: ["postsFetching"],
     }),
+    viewPost: builder.query<any, any>({
+      query: (data: any) => ({
+        url: `posts/${data?.id}`,
+      }),
+      providesTags: ["postsFetching"],
+    }),
+    viewMutationPost: builder.mutation<any, any>({
+      query: (data: any) => ({
+        url: `posts/${data?.id}`,
+        method:"GET"
+      }),
+      invalidatesTags: ["postsFetching"],
+    }),
   }),
 });
 
@@ -60,4 +73,6 @@ export const {
   useAddNewPostMutation,
   useDeletePostMutation,
   useEditPostMutation,
+  useViewPostQuery,
+  useViewMutationPostMutation
 } = postsApi;
