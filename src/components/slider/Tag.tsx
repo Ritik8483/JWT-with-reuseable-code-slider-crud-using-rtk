@@ -1,7 +1,6 @@
 import style from "../slider/styles.module.scss";
 
 const Tag = ({ data, tagIndex, setSelectedIndex, selectedIndex }: any) => {
-
   return (
     <>
       <li

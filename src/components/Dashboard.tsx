@@ -19,16 +19,20 @@ import { useDebounce } from "use-debounce";
 import App from "./slider/App";
 import { Outlet, useNavigate } from "react-router-dom";
 import Details from "./Details";
+import CustomPagination from "../reuseable/CustomPagination";
+import { useDispatch } from "react-redux";
+import { storeViewUserId } from "../slices/authSlice";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
+  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState<any>(1);
   const [pageNo, setPageNo] = useState(0);
   const [addModal, setAddModal] = useState(false);
   const [editData, setEditData] = useState({});
   const [sortBtn, setSortBtn] = useState(false);
   const [searchInput, setSearchInput] = useState();
-  const [detailData,setDetailData]=useState();
+  const [detailData, setDetailData] = useState();
   const [value] = useDebounce(searchInput, 1000);
 
   const [deletePost] = useDeletePostMutation();
@@ -49,9 +53,11 @@ const Dashboard = () => {
     useGetAllPostsQuery(qurrParams);
   const { data: totalData } = useTotalNoOfPostsQuery();
 
-  const handlePagination = (page: any) => {
-    setCurrentPage(page);
-  };
+  console.log("totalData", totalData?.length);
+
+  // const handlePagination = (page: any) => {
+  //   setCurrentPage(page);
+  // };
 
   const onHideFunction = () => {
     setAddModal(false);
@@ -76,21 +82,10 @@ const Dashboard = () => {
 
   const handleView = async (id: any) => {
     // navigate(`/home/dashboard/details/${id}`);
-    const datas = {
-      id: id,
-    };
-    try {
-      const result:any = await viewMutationPost(datas);
-      console.log('rr',result);
-      
-      setDetailData(result?.data)
-    navigate('/home/dashboard/details');
-    
-    } catch (error) {
-      console.log("error", error);
-    }
+    dispatch(storeViewUserId(id));     //when refreshes we lost the data in Redux state
+    localStorage.setItem("userId", JSON.stringify(id));
+    navigate("/home/dashboard/details");
   };
-  
 
   return (
     <div>
@@ -115,6 +110,12 @@ const Dashboard = () => {
           }}
         >
           Add Details
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => navigate(-1)}
+        >
+          Dashboard
         </Button>
       </div>
 
@@ -156,7 +157,7 @@ const Dashboard = () => {
               return (
                 <tr
                   style={{ cursor: "pointer" }}
-                  // onClick={() => handleView(d.id)}
+                  onClick={() => handleView(d.id)}
                   key={d?.id}
                 >
                   <td>
@@ -192,10 +193,12 @@ const Dashboard = () => {
           </tbody>
         </Table>
       ) : null}
-      <Pagination
-        current={currentPage}
-        total={Math.ceil(totalData?.length / pageSize)}
-        onPageChange={(page) => handlePagination(page)}
+      <CustomPagination
+        sortBtn={sortBtn}
+        currentPage={currentPage}
+        totalData={totalData}
+        pageSize={pageSize}
+        setCurrentPage={setCurrentPage}
       />
       {addModal && (
         <AddDetailsModal

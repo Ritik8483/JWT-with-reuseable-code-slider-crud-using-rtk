@@ -82,6 +82,9 @@ const Home = () => {
         <Button onClick={()=>navigate('/home/dashboard')}  variant="secondary" className="mt-3">
           Dashboard
         </Button>
+        <Button onClick={()=>navigate('/home/react-dnd')}  variant="secondary" className="mt-3">
+          React DND
+        </Button>
       </div>
       {modal && (
         <ChartModal
